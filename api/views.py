@@ -46,3 +46,58 @@ class LandingAPI(APIView):
 
         # Devuelve el id del objeto guardado
         return Response({"id": new_resource.key}, status=status.HTTP_201_CREATED)
+
+
+class LandingAPIDetail(APIView):
+    name = "Landing Detail API"
+
+    collection_name = "data"
+
+    def get(self, request, pk):
+        ref = db.reference(f"{self.collection_name}")
+        data = ref.get()
+
+        if data.get(pk) is None:
+            return Response(
+                {"message": "Clave no encontrada"}, status=status.HTTP_404_NOT_FOUND
+            )
+        else:
+            return Response(data.get(pk), status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        fields = ["apellidos", "cedula", "email", "nombres", "pago", "saved"]
+
+        for field in fields:
+            if field not in request.data:
+                return Response(
+                    {"error": f"El campo {field} es requerido"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+        ref = db.reference(f"{self.collection_name}")
+        data = ref.get()
+
+        if data.get(pk) is None:
+            return Response(
+                {"message": "Clave no encontrada"}, status=status.HTTP_404_NOT_FOUND
+            )
+        else:
+            ref.child(pk).update(request.data)
+            return Response(
+                {"message": "Actualizado Correctamente"}, status=status.HTTP_200_OK
+            )
+
+    def delete(self, request, pk):
+        ref = db.reference(f"{self.collection_name}")
+        data = ref.get()
+
+        if data.get(pk) is None:
+            return Response(
+                {"message": "Clave no encontrada"}, status=status.HTTP_404_NOT_FOUND
+            )
+        else:
+            ref.child(pk).delete()
+            return Response(
+                {"message": "Datos Eliminados exitosamente"},
+                status=status.HTTP_204_NO_CONTENT,
+            )
