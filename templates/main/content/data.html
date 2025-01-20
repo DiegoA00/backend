@@ -43,7 +43,7 @@
           </p>
           <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
             <!-- START - first_responses -->
-            {{first_responses}}
+            {{first_response}}
             <!-- END - first_responses -->
           </p>
         </div>
@@ -63,7 +63,7 @@
           </p>
           <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
             <!-- START - last_responses -->
-            ZZZ
+            {{last_response}}
             <!-- END - last_responses -->
           </p>
         </div>
@@ -83,7 +83,7 @@
           </p>
           <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
             <!-- START - high_rate_responses -->
-            VVV
+            {{high_rate_responses}}
             <!-- END - high_rate_responses -->
           </p>
         </div>
@@ -99,6 +99,11 @@
             <tr
               class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
               <th class="px-4 py-3">Correo</th>
+              <th class="px-4 py-3">Cédula</th>
+              <th class="px-4 py-3">Nombres</th>
+              <th class="px-4 py-3">Apellidos</th>
+              <th class="px-4 py-3">Celular</th>
+              <th class="px-4 py-3">Tipo de Pago</th>
               <th class="px-4 py-3">Fecha</th>
             </tr>
           </thead>
@@ -111,6 +116,31 @@
                 <!-- START - row.email -->
                 {{ row.email }}
                 <!-- END - row.email -->
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <!-- START - row.cedula -->
+                {{ row.cedula }}
+                <!-- END - row.cedula -->
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <!-- START - row.nombres -->
+                {{ row.nombres }}
+                <!-- END - row.nombres -->
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <!-- START - row.apellidos -->
+                {{ row.apellidos }}
+                <!-- END - row.apellidos -->
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <!-- START - row.celular -->
+                {{ row.celular }}
+                <!-- END - row.celular -->
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <!-- START - row.pago -->
+                {{ row.pago }}
+                <!-- END - row.pago -->
               </td>
               <td class="px-4 py-3 text-sm">
                 <!-- START - row.saved -->
