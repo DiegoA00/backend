@@ -31,26 +31,36 @@ def index(request):
     # Respuestas totales
     total_responses = len(response_dict.keys())
 
-    first_response = None
     # for key, value in response_dict.items():
-    # fecha_str = value.get("saved")
-    # fecha_str = fecha_str.replace("p.\xa0m.", "PM").replace("a.\xa0m.", "AM")
-    # print(fecha_str)
-    # fecha_datetime = datetime.strptime(fecha_str, "%d/%m/%Y, %I:%M:%S %p")
-    # print(fecha_datetime)
-    # print("\n")
-    # if first_response is None or fecha_datetime < first_response:
-    # first_response = fecha_datetime
+    #     fecha_str = value.get("saved")
+
+    #     if fecha_str is None:
+    #         continue  # Si no hay fecha, pasa a la siguiente iteración
+
+    #     fecha_str = fecha_str.replace("p.\xa0m.", "PM").replace("a.\xa0m.", "AM")
+
+    #     try:
+    #         fecha_datetime = datetime.strptime(fecha_str, "%d/%m/%Y, %I:%M:%S %p")
+    #     except ValueError:
+    #         # Manejo para fechas con un solo dígito en el día o mes
+    #         fecha_datetime = datetime.strptime(fecha_str, "%d/%m/%Y, %I:%M:%S %p")
+
+    #     print(f"Fecha procesada: {fecha_datetime}")
+
+    #     # Comparación para encontrar la fecha más antigua
+    #     if first_response is None or fecha_datetime < first_response:
+    #         first_response = fecha_datetime
+
 
     # Valores de la respuesta
-    responses = response_dict.values()
+    # responses = response_dict.values()
 
     # Objeto con los datos a renderizar
     data = {
         "title": "Landing - Dashboard",
         "total_responses": total_responses,
-        "first_response": first_response,
-        "responses": responses,
+        # "first_response": first_response,
+        # "responses": responses,
     }
 
     # Renderización en la plantilla
