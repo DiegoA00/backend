@@ -11,25 +11,21 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+import json
 import firebase_admin
 from firebase_admin import credentials
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-tan)!)7=z2i9!ai7p8@rye_n@ifbkx1dscd)t-6vz4&&*qx6y9"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-tan)!)7=z2i9!ai7p8@rye_n@ifbkx1dscd)t-6vz4&&*qx6y9")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 
@@ -75,10 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Database (Remover si solo usas Firebase)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -86,10 +79,19 @@ DATABASES = {
     }
 }
 
+# Firebase Authentication
+FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS")
+
+if FIREBASE_CREDENTIALS:
+    firebase_config = json.loads(FIREBASE_CREDENTIALS)
+    cred = credentials.Certificate(firebase_config)
+    firebase_admin.initialize_app(
+        cred, {"databaseURL": "https://landing-c1529-default-rtdb.firebaseio.com/"}
+    )
+else:
+    raise ValueError("❌ ERROR: No se encontró la variable de entorno FIREBASE_CREDENTIALS.")
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -105,46 +107,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = "static/"
 
-# Directorios adicionales donde buscar archivos estáticos
-STATICFILES_DIRS = [
-    BASE_DIR / STATIC_URL,
-]
+# Configuración adicional de archivos estáticos para Railway
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Coloque la ruta relativa al archivo con la clave privada
-FIREBASE_CRED = credentials.Certificate(
-    "keys/landing-key.json"
-)
-
-# Inicialice la conexión con el Realtime Database con la clave privada y la URL de referencia
-firebase_admin.initialize_app(
-    FIREBASE_CRED, {"databaseURL": "https://landing-c1529-default-rtdb.firebaseio.com/"}
-)
-
-# Fallo: acceso sin autenticación
-LOGIN_URL = '/login/'
-
-# Éxito: luego de autenticación exitosa
-LOGIN_REDIRECT_URL = '/'
+# Configuración de autenticación
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
