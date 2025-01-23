@@ -27,9 +27,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "backend-dawm.up.railway.app,127.0.0.1,localhost").split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://backend-dawm.up.railway.app",
-]
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://backend-dawm.up.railway.app").split(",")
 
 # Application definition
 
