@@ -20,14 +20,20 @@ from firebase_admin import credentials
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-tan)!)7=z2i9!ai7p8@rye_n@ifbkx1dscd)t-6vz4&&*qx6y9")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-tan)!)7=z2i9!ai7p8@rye_n@ifbkx1dscd)t-6vz4&&*qx6y9"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "backend-production-4f8b.up.railway.app,127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS", "backend-production-4f8b.up.railway.app,127.0.0.1,localhost"
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://backend-production-4f8b.up.railway.app").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", "https://backend-production-4f8b.up.railway.app"
+).split(",")
 
 # Application definition
 
@@ -45,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Agregar aquí
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -52,6 +59,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Configuración de almacenamiento estático en producción
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = "backend.urls"
 
@@ -91,7 +101,9 @@ if FIREBASE_CREDENTIALS:
         cred, {"databaseURL": "https://landing-c1529-default-rtdb.firebaseio.com/"}
     )
 else:
-    raise ValueError("❌ ERROR: No se encontró la variable de entorno FIREBASE_CREDENTIALS.")
+    raise ValueError(
+        "❌ ERROR: No se encontró la variable de entorno FIREBASE_CREDENTIALS."
+    )
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
