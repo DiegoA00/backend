@@ -38,7 +38,13 @@ def index(request):
         if not fecha_str:
             continue
 
-        fecha_str = fecha_str.replace("\xa0", " ")
+        fecha_str = (
+            fecha_str.replace("\xa0", " ")  # Reemplaza el espacio no estándar
+            .replace("p. m.", "PM")
+            .replace("a. m.", "AM")
+            .replace("p.m.", "PM")
+            .replace("a.m.", "AM")
+        )
         try:
             fecha_datetime = datetime.strptime(fecha_str, "%d/%m/%Y, %I:%M:%S %p")
 

@@ -58,7 +58,7 @@ const lineConfig = {
 const lineCtx = document.getElementById('line')
 window.myLine = new Chart(lineCtx, lineConfig)
 
-countResponsesPerDay = (data) => {
+const countResponsesPerDay = (data) => {
   const labels = [];
   for (let i = 6; i >= 0; i--) {
     const date = new Date();
@@ -77,7 +77,7 @@ countResponsesPerDay = (data) => {
 
     const formattedTime = savedTime.replace('a. m.', 'AM').replace('p. m.', 'PM');
     const dt = new Date(Date.parse(formattedTime.replace(/(\d{2}\/\d{2}\/\d{4}), (\d{2}):(\d{2}):(\d{2}) (AM|PM)/, '$1 $2:$3:$4 $5')));
-    const day = dt.getDay();
+    const day = (dt.getDay() + 6) % 7; // Adjust day index to match labels array
 
     if (paymentType === 'contado') {
       countsContado[day]++;
@@ -89,7 +89,7 @@ countResponsesPerDay = (data) => {
   return { labels, countsContado, countsCredito };
 }
 
-update = () => {
+const update = () => {
   fetch('/api/v1/landing')
     .then(response => response.json())
     .then(data => {
