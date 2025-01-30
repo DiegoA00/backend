@@ -38,80 +38,70 @@ const lineConfig = {
     scales: {
       x: {
         display: true,
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: '',
+          text: 'Últimos 7 días',
         },
       },
       y: {
         display: true,
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: '',
+          text: 'Cantidad de Respuestas',
         },
       },
     },
   },
+};
+
+const lineCtx = document.getElementById('line');
+window.myLine = new Chart(lineCtx, lineConfig);
+
+function getLast7Days() {
+  const days = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    days.push(d);
+  }
+  return days;
 }
 
-// change this to the id of your chart element in HMTL
-const lineCtx = document.getElementById('line')
-window.myLine = new Chart(lineCtx, lineConfig)
-
 const countResponsesPerDay = (data) => {
-  const labels = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    labels.push(date.toLocaleDateString('es-ES', { weekday: 'long' }));
-  }
-  const countsContado = [0, 0, 0, 0, 0, 0, 0];
-  const countsCredito = [0, 0, 0, 0, 0, 0, 0];
+  const last7Days = getLast7Days();
+  const labels = last7Days.map(d => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }));
+  const countsContado = new Array(7).fill(0);
+  const countsCredito = new Array(7).fill(0);
 
   Object.values(data).forEach(record => {
-    const savedTime = record.saved;
-    const paymentType = record.pago;
-    if (!savedTime || !paymentType) {
-      return;
-    }
+    const { pago, saved } = record;
+    if (!pago || !saved) return;
 
-    const formattedTime = savedTime.replace('a. m.', 'AM').replace('p. m.', 'PM');
-    const dt = new Date(Date.parse(formattedTime.replace(/(\d{2}\/\d{2}\/\d{4}), (\d{2}):(\d{2}):(\d{2}) (AM|PM)/, '$1 $2:$3:$4 $5')));
-    const day = (dt.getDay() + 6) % 7; // Adjust day index to match labels array
+    const [datePart] = saved.split(",");
+    const [day, month, year] = datePart.trim().split("/");
+    const dt = new Date(+year, +month - 1, +day);
 
-    if (paymentType === 'contado') {
-      countsContado[day]++;
-    } else if (paymentType === 'crédito') {
-      countsCredito[day]++;
-    }
+    const index = last7Days.findIndex(d => d.toDateString() === dt.toDateString());
+    if (index === -1) return;
+
+    pago.toLowerCase() === 'contado' ? countsContado[index]++ : countsCredito[index]++;
   });
 
   return { labels, countsContado, countsCredito };
-}
+};
 
-const update = () => {
+const updateLine = () => {
   fetch('/api/v1/landing')
     .then(response => response.json())
     .then(data => {
-      let { labels, countsContado, countsCredito } = countResponsesPerDay(data)
-
-      // Reset data
-      window.myLine.data.labels = [];
-      window.myLine.data.datasets[0].data = [];
-      window.myLine.data.datasets[1].data = [];
-
-      // New data
-      window.myLine.data.labels = [...labels]
-      window.myLine.data.datasets[0].data = [...countsContado]
-      window.myLine.data.datasets[1].data = [...countsCredito]
-
-      // Update axis labels
-      window.myLine.options.scales.x.scaleLabel.labelString = 'Día de la semana';
-      window.myLine.options.scales.y.scaleLabel.labelString = 'Cantidad';
-
+      const { labels, countsContado, countsCredito } = countResponsesPerDay(data);
+      window.myLine.data.labels = labels;
+      window.myLine.data.datasets[0].data = countsContado;
+      window.myLine.data.datasets[1].data = countsCredito;
       window.myLine.update();
     })
     .catch(error => console.error('Error:', error));
-}
+};
 
-update();
+updateLine();

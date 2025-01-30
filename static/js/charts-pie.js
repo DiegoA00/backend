@@ -32,10 +32,11 @@ const pieConfig = {
 
 // change this to the id of your chart element in HMTL
 const pieCtx = document.getElementById('pie')
-window.myPie = new Chart(pieCtx, pieConfig)
+// window.myPie = new Chart(pieCtx, pieConfig)
+let myPie = new Chart(pieCtx, pieConfig)
 
 // Función para procesar el JSON
-countCommentsByHour = (data) => {
+const countCommentsByHour = (data) => {
 
   // Inicializar contadores por rango de horas
   const labels = ["0 a.m. - 8 a.m.", "8 a.m. - 4 p.m.", "4 p.m. - 0 a.m."];
@@ -68,25 +69,31 @@ countCommentsByHour = (data) => {
   return { labels, counts };
 }
 
-update = () => {
+const updateChart = () => { 
   fetch('/api/v1/landing')
     .then(response => response.json())
     .then(data => {
-
+      
       let { labels, counts } = countCommentsByHour(data)
 
       // Reset data
-      window.myPie.data.labels = [];
-      window.myPie.data.datasets[0].data = [];
+      // window.myPie.data.labels = [];
+      // window.myPie.data.datasets[0].data = [];
+      myPie.data.labels = [];
+      myPie.data.datasets[0].data = [];
 
       // New data
-      window.myPie.data.labels = [...labels]
-      window.myPie.data.datasets[0].data = [...counts]
+      // window.myPie.data.labels = [...labels]
+      // window.myPie.data.datasets[0].data = [...counts]
 
-      window.myPie.update();
+      // window.myPie.update();
+      myPie.data.labels = [...labels]
+      myPie.data.datasets[0].data = [...counts]
+
+      myPie.update();
 
     })
     .catch(error => console.error('Error:', error));
 }
 
-update();
+updateChart();
